@@ -162,15 +162,20 @@ public class CoreFeature extends SimpleFeature {
     }
 
     protected void cleanupSession(FeaturesRunner runner) throws ClientException {
-        waitForAsyncCompletion();
-        if (TransactionHelper.isTransactionMarkedRollback()) { // ensure tx is
-                                                               // active
-            TransactionHelper.commitOrRollbackTransaction();
-            TransactionHelper.startTransaction();
-        }
+        // closed by shutdown in afterRun
+        @SuppressWarnings("resource")
         CoreSession session = repository.getSession();
         if (session == null) {
-            session = repository.createSession();
+            // closed by shutdown in afterRun
+            @SuppressWarnings("resource")
+            CoreSession cs = repository.createSession();
+            session = cs;
+        }
+        session.save(); // so that pending creates don't get flushed with removes
+        waitForAsyncCompletion();
+        if (TransactionHelper.isTransactionMarkedRollback()) { // ensure tx is active
+            TransactionHelper.commitOrRollbackTransaction();
+            TransactionHelper.startTransaction();
         }
         try {
             log.trace("remove everything except root");
