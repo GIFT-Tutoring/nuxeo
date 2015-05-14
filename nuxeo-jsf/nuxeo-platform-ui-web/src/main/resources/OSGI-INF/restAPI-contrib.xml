@@ -80,6 +80,23 @@
     </restletPlugin>
 
     <documentation>
+      GET /nuxeo/restAPI/{repoId}/{docId}/exportTree/binary
+      => export a document tree's contents (folders, attached files, ...) 
+
+      Associated GET parameters are :
+      - format : xml/zip
+    </documentation>
+    <restletPlugin
+        name="exportBinary"
+        class="org.nuxeo.ecm.platform.ui.web.restAPI.BinaryExportRestlet"
+        enabled="true"
+        useSeam="false">
+      <urlPatterns>
+        <urlPattern>/{repo}/{docid}/exportTree/binary</urlPattern>
+      </urlPatterns>
+    </restletPlugin>
+
+    <documentation>
       Allows lock manipulation via Restlet API:
       GET /nuxeo/restAPI/{repoId}/{docId}/Locking/lock
       GET /nuxeo/restAPI/{repoId}/{docId}/Locking/unlock
